@@ -50,7 +50,7 @@ beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 beautiful.wallpaper = os.getenv("HOME") .. "/photos/wallpaper.jpg"
 
 -- This is used later as the default terminal and editor to run.
-terminal = "x-terminal-emulator"
+terminal = "st" --"x-terminal-emulator"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -89,8 +89,8 @@ battery = battery_widget({adapter = "BAT0", battery_prefix = "🔋", ac_prefix =
 -- {{{ define your layouts
 kbdcfg = kbdind({
     layouts = {
-        {name=" PL ",  layout="pl",  variant=nil},
-        {name=" US ",  layout="us",  variant=nil}
+        {name=" PL ",  layout="pl",  variant="alt:leftaltismeta"},
+        {name=" US ",  layout="us",  variant="alt:leftaltismeta"}
     }
 })
 -- }}}
@@ -237,7 +237,6 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
-            kbdcfg.widget,
             volume({}),
             temp({}),
             battery,
@@ -356,11 +355,6 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
     
-    awful.key({ "Shift"         }, "Shift_R", function() kbdcfg:next() end,
-              { description = "next keyboard layout", group =""}),
-    awful.key({ "Mod4", "Shift" }, "Shift_R", function() kbdcfg:prev() end,
-              {description = "previou keyboard layout", group=""}),
-
     awful.key({ modkey }, "d", function() xrandr() end, 
        {description = "show xrandr info", group = ""}),
     awful.key({}, "XF86AudioMute", function() volume.mute() end, 
@@ -370,9 +364,9 @@ globalkeys = awful.util.table.join(
     awful.key({}, "XF86AudioLowerVolume", function() volume.lower() end, 
        {description = "volume lower by 5%", group = ""}),
     awful.key({}, "XF86AudioMicMute", function() volume.mic_mute() end, 
-       {description = "volume mic mute", group = ""}),
-    awful.key({ modkey }, "l", function()  awful.util.spawn ("xscreensaver-command -lock")  end, 
-       {description = "lock screen", group = ""})
+       {description = "volume mic mute", group = ""})
+--    awful.key({ modkey }, "l", function()  awful.util.spawn ("xscreensaver-command -lock")  end, 
+ --      {description = "lock screen", group = ""})
         
 )
 

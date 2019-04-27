@@ -75,6 +75,33 @@ function battery_widget.new(args)
     return sw
 end
 
+function battery_widget:get_devices() 
+    local devices = {}
+	local f = io.popen('upower --dump')
+    local device = nil  
+    local pat = nil
+
+    for line in f:lines() do 
+        if string.match(line, "^Device")  then
+            if device and device['name'] then 
+                devices[#devices + 1] = device
+            end
+            device = {}
+        end
+        pat = string.match(line, "^%s+model:%s+(.+)")
+        if pat then 
+            device['name'] = pat
+        end
+        pat = string.match(line, "^%s+percentage:%s+(.+)")
+        if pat then 
+            device['percent'] = pat
+        end
+    end
+    f:close()
+
+    return devices
+end
+
 function battery_widget:get_state()
     local present, capacity, state, rate, charge
     local percent, time, is_charging
@@ -170,11 +197,18 @@ function battery_widget:update()
     else
         captext = "\nCapacity: Err!"
     end
-
     -- update tooltip
     if state == nil then
         state = "Err!"
     end
+
+    local devices = battery_widget:get_devices()
+    for k,v in pairs(devices) do 
+        if v['name'] and v['name'] ~= 'BAT' then
+            captext = captext .. "\n" .. v['name'] .. ' ' .. v['percent']
+        end
+    end
+
     if is_charging == 1 then
         self.tooltip:set_text("Battery "..state..est_postfix..captext)
     elseif is_charging == -1 then

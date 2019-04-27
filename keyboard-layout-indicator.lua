@@ -101,12 +101,13 @@ end
 function indicator:get(i)
     -- parse current layout from setxkbmap
     local status = readcommand(self.cmd .. " -query")
-    local layout = trim(string.match(status, "layout:([^\n]*)"))
+    local layout = trim(string.match(status, "layout:%s+(%a+)"))
     local variant = trim(string.match(status, "variant:([^\n]*)"))
+
     -- find layout in self.layouts
     local index = findindex(self.layouts,
         function (v)
-            return v.layout==layout and v.variant == variant
+            return v.layout == layout and v.variant == variant 
         end)
     if index == nil then
         self.current = {color="yellow"}
