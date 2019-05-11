@@ -17,6 +17,7 @@ local kbdind = require("keyboard-layout-indicator")
 local vc = require("volume-control")
 local temp = require("temp")
 local volume = require("volume")
+local smartctl = require("smart")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -83,7 +84,9 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ 
-battery = battery_widget({adapter = "BAT0", battery_prefix = "🔋", ac_prefix = "⚡"})
+local smarthdd = smartctl('/dev/sda', '/dev/sdb')
+local battery = battery_widget({adapter = "BAT0", battery_prefix = "🔋", ac_prefix = "⚡"})
+local audiovol = vc({cardid = "0"})
 -- }}}
 --
 -- {{{ define your layouts
@@ -236,8 +239,10 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
+            smarthdd,
             wibox.widget.systray(),
-            volume({}),
+            audiovol,
+            --volume({}),
             temp({}),
             battery,
             mytextclock,
