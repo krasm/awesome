@@ -53,9 +53,9 @@ function battery_widget.new(args)
     sw.ac_prefix = args.ac_prefix or "AC: "
     sw.battery_prefix = args.battery_prefix or "Bat: "
     sw.limits = args.limits or {
-        {25, "red"},
-        {50, "orange"},
-        {100, "green"}
+        {15, "red"},
+        {40, "orange"},
+        {80, "green"}
     }
 
     sw.widget = wibox.widget.textbox()
@@ -112,7 +112,13 @@ function battery_widget:get_state()
     state     = trim(readfile(dir.."/status"):lower())
     rate      = readfile(dir.."/current_now")
     charge    = readfile(dir.."/charge_now")
+    if not charge then
+	    charge = readfile(dir.."/energy_now")
+    end
     capacity  = readfile(dir.."/charge_full")
+    if not capacity then
+	    capacity = readfile(dir.."/energy_full")
+    end
     design    = readfile(dir.."/charge_full_design")
     ac_state  = readfile(pre.."/AC/online")
 
