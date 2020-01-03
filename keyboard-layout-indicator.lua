@@ -55,8 +55,8 @@ function indicator.new(args)
         awful.button({ }, 5, function() sw:next() end)
     ))
 
-    sw.timer = timer({ timeout = args.timeout or 0.5 })
-    sw.timer:connect_signal("timeout", function() sw:get() end)
+    sw.timer = timer({ timeout = args.timeout or 1 })
+    sw.timer:connect_signal("timeout", function() sw:update() end)
     sw.timer:start()
     sw:get()
     return sw
@@ -77,9 +77,8 @@ function indicator:set(i)
             cmd = cmd .. " " .. self.current.variant
         end
     end
+    cmd = cmd .. " -option alt:leftaltismeta -option caps:escape"
     os.execute( cmd )
-
-    os.execute("xmodmap ~/.Xmodmap")
 end
 
 function indicator:setcustom(str)
@@ -89,13 +88,7 @@ end
 
 function indicator:update()
     -- update widget text
-    local text = self.current.name
-    if self.current.color and self.current.color ~= nil then
-        markup = '<span color="' .. self.current.color .. '">' .. text ..'</span>'
-        self.widget:set_markup(markup)
-    else
-        self.widget:set_text(text)
-    end
+    self.widget:set_text(self.current.name)
 end
 
 function indicator:get(i)

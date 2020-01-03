@@ -84,16 +84,16 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ 
-local smarthdd = smartctl('/dev/sda', '/dev/sdb')
+local smarthdd = smartctl('/dev/sda')
 local battery = battery_widget({adapter = "BAT0", battery_prefix = "🔋", ac_prefix = "⚡"})
 local audiovol = vc({cardid = "0"})
 -- }}}
 --
 -- {{{ define your layouts
-kbdcfg = kbdind({
+kbdlayout = kbdind({
     layouts = {
-        {name=" PL ",  layout="pl",  variant="alt:leftaltismeta"},
-        {name=" US ",  layout="us",  variant="alt:leftaltismeta"}
+        {name=" PL ",  layout="pl",  variant=""},
+        {name=" US ",  layout="us",  variant=""}
     }
 })
 -- }}}
@@ -134,9 +134,6 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
-
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -238,7 +235,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            kbdlayout,
             smarthdd,
             wibox.widget.systray(),
             audiovol,
