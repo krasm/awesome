@@ -18,6 +18,7 @@ local vc = require("volume-control")
 local temp = require("temp")
 local volume = require("volume")
 local smartctl = require("smart")
+local open_weather = require("open-weather")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -84,9 +85,10 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ 
-local smarthdd = smartctl('/dev/sda')
+local smarthdd = smartctl('/dev/sda', '/dev/nvme0')
 local battery = battery_widget({adapter = "BAT0", battery_prefix = "🔋", ac_prefix = "⚡"})
 local audiovol = vc({cardid = "0"})
+local weather = open_weather({})
 -- }}}
 --
 -- {{{ define your layouts
@@ -235,6 +237,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            weather,
             kbdlayout,
             smarthdd,
             wibox.widget.systray(),
