@@ -8,6 +8,27 @@ local city_id = '2962153'
 
 -- weather indicator (openweathermap.org)
 
+local icons = {
+   ["01d"] = "☼",
+   ["01n"] = "☼",
+   ["02d"] = "⛅",
+   ["02n"] = "⛅",
+   ["03d"] = "☁",
+   ["03n"] = "☁",
+   ["04d"] = "🌥",
+   ["04n"] = "🌥",
+   ["09d"] = "🌧",
+   ["09n"] = "🌧",
+   ["10d"] = "🌦",
+   ["10n"] = "🌦",
+   ["11d"] = "🌩",
+   ["11n"] = "🌩",
+   ["13d"] = "🌨",
+   ["13n"] = "🌨",
+   ["50d"] = "🌫",
+   ["50n"] = "🌫"
+}
+
 local indicator = { mt = {}, wmt = {} }
 indicator.wmt.__index = indicator
 
@@ -30,7 +51,7 @@ end
 
 function indicator.new(args)
     local sw = setmetatable({}, indicator.wmt)
-    
+
     sw.info = nil
     sw.description = nil
     sw.icon = nil
@@ -58,7 +79,7 @@ function indicator:update()
     local response = http.request("https://api.openweathermap.org/data/2.5/weather?id=" .. city_id .. "&APIKEY=" .. apikey)
     local parsed_response = json.decode(response)
 
-    self.info = parsed_response['weather'][1]['main']
+    self.info = string.lower( parsed_response['weather'][1]['main'] )
     self.description = parsed_response['weather'][1]['description']
     self.icon = parsed_response['weather'][1]['icon']
 
@@ -69,7 +90,13 @@ function indicator:update()
     self.wind = parsed_response['wind']['speed']
     self.dt = os.date("%x %X", tonumber(parsed_response['dt']))
 
-    local text = "  " .. self.info .. " " .. (tonumber(self.temp) - 273.15) .. "℃  " .. self.wind .. " m/s  "
+    local text = "  "
+    if self.icon and icons[self.icon] then
+       text = text .. icons[self.icon]
+    else
+       text = text .. self.info
+    end
+    text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃  " .. self.wind .. " m/s  "
     local text_dropdown = self.description .. "\n\nFeels like: " .. self.feels_like .. "℃ \nPressure: " .. self.pressure .. "\nHumidity: " .. self.humidity .. "%\n\n" .. self.dt
     self.widget:set_text(text)
     self.tooltip:set_text(text_dropdown)
@@ -80,4 +107,3 @@ function indicator.mt:__call(...)
 end
 
 return setmetatable(indicator, indicator.mt)
-
