@@ -103,7 +103,7 @@ function indicator:update()
 
     text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃  " .. string.format("%3.0f", self.wind)
        .. " km/h  "
-    local text_dropdown = self.description .. "\n\nFeels like: " .. self.feels_like .. "℃ \nPressure: " .. self.pressure .. "\nHumidity: " .. self.humidity .. "%\n\n" .. self.dt
+    local text_dropdown = self.description .. "\n\nFeels like: " .. string.format("%3.1f", self.feels_like) .. "℃ \nPressure: " .. self.pressure .. "\nHumidity: " .. self.humidity .. "%\n\n" .. self.dt
     self.widget:set_text(text)
     self.tooltip:set_text(text_dropdown)
 end
