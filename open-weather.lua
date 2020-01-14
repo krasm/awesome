@@ -90,13 +90,19 @@ function indicator:update()
     self.wind = parsed_response['wind']['speed']
     self.dt = os.date("%x %X", tonumber(parsed_response['dt']))
 
+    if self.wind then
+       self.wind = (tonumber(self.wind) * 3.6)
+    end
+
     local text = "  "
     if self.icon and icons[self.icon] then
        text = text .. icons[self.icon]
     else
        text = text .. self.info
     end
-    text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃  " .. self.wind .. " m/s  "
+
+    text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃  " .. string.format("%3.0f", self.wind)
+       .. " km/h  "
     local text_dropdown = self.description .. "\n\nFeels like: " .. self.feels_like .. "℃ \nPressure: " .. self.pressure .. "\nHumidity: " .. self.humidity .. "%\n\n" .. self.dt
     self.widget:set_text(text)
     self.tooltip:set_text(text_dropdown)
