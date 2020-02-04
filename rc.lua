@@ -17,7 +17,6 @@ local kbdind = require("keyboard-layout-indicator")
 local vc = require("volume-control")
 local temp = require("temp")
 local volume = require("volume")
-local smartctl = require("smart")
 local open_weather = require("open-weather")
 
 -- {{{ Error handling
@@ -49,7 +48,8 @@ end
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 --beautiful.init(awful.util.get_themes_dir() .. "default/theme.lua")
-beautiful.wallpaper = os.getenv("HOME") .. "/photos/wallpaper.jpg"
+-- beautiful.wallpaper = os.getenv("HOME") .. "/photos/wallpaper.jpg"
+beautiful.wallpaper = os.getenv("HOME") .. "/photos/wallpaper"
 
 -- This is used later as the default terminal and editor to run.
 terminal = "st" --"x-terminal-emulator"
@@ -85,7 +85,6 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ 
-local smarthdd = smartctl('/dev/sda', '/dev/nvme0')
 local battery = battery_widget({adapter = "BAT0", battery_prefix = "🔋", ac_prefix = "⚡"})
 local audiovol = vc({cardid = "0"})
 local weather = open_weather({})
@@ -237,10 +236,9 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            wibox.widget.systray(),
             weather,
             kbdlayout,
-            smarthdd,
-            wibox.widget.systray(),
             audiovol,
             --volume({}),
             temp({}),
