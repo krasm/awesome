@@ -101,7 +101,7 @@ function indicator:update()
        text = text .. self.info
     end
 
-    text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃" .. string.format("%3.0f", self.wind)
+    text = text .. " " .. math.floor((tonumber(self.temp) - 273.15)) .. "℃" .. string.format("%3.0f", self.wind)
        .. " km/h  "
     local text_dropdown = self.description .. "\n\nFeels like: " .. string.format("%3.1f", self.feels_like) .. "℃ \nPressure: " .. self.pressure .. "\nHumidity: " .. self.humidity .. "%\n\n" .. self.dt
     self.widget:set_text(text)
