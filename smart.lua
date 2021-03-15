@@ -62,7 +62,6 @@ function vcontrol:update(results)
     local details = ''
     local text = '🖫' --'🖴'
     for _,v in ipairs(results) do
-        print('arcin', v)
         details = details .. v[1] .. ' ' .. v[2] .. '\n'
         if v[2] ~= 'PASSED' then
             status = false

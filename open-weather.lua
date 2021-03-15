@@ -74,25 +74,40 @@ function indicator.new(args)
     return sw
 end
 
-function indicator:update()
-    -- update widget text
+local function get_current(obj)
     local response = http.request("https://api.openweathermap.org/data/2.5/weather?id=" .. city_id .. "&APIKEY=" .. apikey)
     local parsed_response = json.decode(response)
 
-    self.info = string.lower( parsed_response['weather'][1]['main'] )
-    self.description = parsed_response['weather'][1]['description']
-    self.icon = parsed_response['weather'][1]['icon']
+    obj.info = string.lower( parsed_response['weather'][1]['main'] )
+    obj.description = parsed_response['weather'][1]['description']
+    obj.icon = parsed_response['weather'][1]['icon']
 
-    self.temp = parsed_response['main']['temp']
-    self.feels_like = tonumber(parsed_response['main']['feels_like']) - 273.15
-    self.pressure = parsed_response['main']['pressure']
-    self.humidity = parsed_response['main']['humidity']
-    self.wind = parsed_response['wind']['speed']
-    self.dt = os.date("%x %X", tonumber(parsed_response['dt']))
+    obj.temp = parsed_response['main']['temp']
+    obj.feels_like = tonumber(parsed_response['main']['feels_like']) - 273.15
+    obj.pressure = parsed_response['main']['pressure']
+    obj.humidity = parsed_response['main']['humidity']
+    obj.wind = parsed_response['wind']['speed']
+    obj.dt = os.date("%x %X", tonumber(parsed_response['dt']))
 
-    if self.wind then
-       self.wind = (tonumber(self.wind) * 3.6)
+    if obj.wind then
+	  obj.wind = (tonumber(obj.wind) * 3.6)
     end
+
+end
+
+local function get_forecast(obj)
+   local response = http.request("https://api.openweathermap.org/data/2.5/forecast?id="
+				    .. city_id .. "&APIKEY=" .. apikey)
+   local parsed_response = json.decode(response)
+
+   print(parsed_response["list"])
+
+end
+
+function indicator:update()
+   -- update widget text
+   get_current(self)
+   get_forecast(self)
 
     local text = "  "
     if self.icon and icons[self.icon] then
@@ -101,9 +116,14 @@ function indicator:update()
        text = text .. self.info
     end
 
-    text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃  " .. string.format("%3.0f", self.wind)
+    text = text .. " " .. (tonumber(self.temp) - 273.15) .. "℃  "
+       .. string.format("%3.1f", self.wind)
        .. " km/h  "
-    local text_dropdown = self.description .. "\n\nFeels like: " .. self.feels_like .. "℃ \nPressure: " .. self.pressure .. "\nHumidity: " .. self.humidity .. "%\n\n" .. self.dt
+    local text_dropdown = self.description ..
+       "\n\nFeels like: " .. string.format("%2.1f℃", self.feels_like) ..
+       "\nPressure: " .. self.pressure ..
+       "\nHumidity: " .. self.humidity ..
+       "%\n" .. self.dt
     self.widget:set_text(text)
     self.tooltip:set_text(text_dropdown)
 end
